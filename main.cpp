@@ -15,21 +15,35 @@ inline constinit Templated::unused_t tester = std::invoke([]() {
 	return Templated::unused_t{};
 });
 
+
+struct scope_printer {
+	explicit scope_printer(std::string_view view) {
+		std::println("{}", view);
+	}
+	~scope_printer() {
+		std::println("");
+	}
+};
+
+
 int main() {
-	std::println("Templated tryout");
-	using Templated::algorithm;
-	Templated::fizzbuzz<algorithm::functional> fb;
-	for (int i{ 0 }; i < 16; ++i) {
-		auto out = fb.apply<Templated::unused_t>(i);
-		std::println("{}", out.empty() ? std::to_string(i) : out);
+	{
+		scope_printer p{ "Templated tryout" };
+		using Templated::algorithm;
+		Templated::fizzbuzz<algorithm::functional> fb;
+		for (int i{ 0 }; i < 16; ++i) {
+			auto out = fb.apply<Templated::unused_t>(i);
+			std::println("{}", out.empty() ? std::to_string(i) : out);
+		}
 	}
 
-
-	std::println("\nComptime tryout");
-	using namespace Comptime;
-	constexpr auto results = make_results<0, 16>();
-	for (int i{ 0 }; i < 16; ++i) {
-		auto out = results[i].to_string();
-		std::println("{}", out.empty() ? std::to_string(i) : out);
+	{
+		scope_printer p{ "Comptime tryout" };
+		using namespace Comptime;
+		constexpr auto results = result::make_range<0, 16>();
+		for (int i{ 0 }; i < 16; ++i) {
+			auto out = results[i].to_string();
+			std::println("{}", out.empty() ? std::to_string(i) : out);
+		}
 	}
 }

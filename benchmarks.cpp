@@ -25,7 +25,7 @@ BENCHMARK(templated_test<Templated::algorithm::fold, Templated::fizz, Templated:
 static void comptime_static_tostring__test(benchmark::State& state) {
 	using namespace Comptime;
 	for (auto _ : state) {
-		constexpr auto results = make_results<0, 1024>();
+		constexpr auto results = result::make_range<0, 1024>();
 		for (int i = 0; i < results.size(); ++i) {
 			auto sv = results[i].to_string();
 			benchmark::DoNotOptimize(sv);
@@ -33,19 +33,6 @@ static void comptime_static_tostring__test(benchmark::State& state) {
 	}
 }
 BENCHMARK(comptime_static_tostring__test);
-
-
-static void comptime_variadic_tostring__test(benchmark::State& state) {
-	using namespace Comptime;
-	for (auto _ : state) {
-		constexpr auto results = make_results<0, 1024>();
-		for (int i = 0; i < results.size(); ++i) {
-			auto sv = results[i].to_string<fizz, buzz>();
-			benchmark::DoNotOptimize(sv);
-		}
-	}
-}
-BENCHMARK(comptime_variadic_tostring__test);
 
 
 BENCHMARK_MAIN();
